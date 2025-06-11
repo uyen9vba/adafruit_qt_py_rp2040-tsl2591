@@ -29,50 +29,49 @@ LOG_MODULE_REGISTER(main);
 #error Unable to determine length of LED strip
 #endif
 
-#define DELAY_TIME K_MSEC(CONFIG_SAMPLE_LED_UPDATE_DELAY)
-
 #define RGB(_r, _g, _b) { .r = (_r), .g = (_g), .b = (_b) }
 
 static const struct led_rgb colors[] = {
-	RGB(CONFIG_SAMPLE_LED_BRIGHTNESS, 0x00, 0x00), /* red */
-	RGB(0x00, CONFIG_SAMPLE_LED_BRIGHTNESS, 0x00), /* green */
-	RGB(0x00, 0x00, CONFIG_SAMPLE_LED_BRIGHTNESS), /* blue */
+	RGB(0x10, 0x00, 0x00), /* red */
+	RGB(0x00, 0x10, 0x00), /* green */
+	RGB(0x00, 0x00, 0x10), /* blue */
 };
 
 static struct led_rgb pixels[STRIP_NUM_PIXELS];
 
 static const struct device *const strip = DEVICE_DT_GET(STRIP_NODE);
-static const struct device *const uart = DEVICE_DT_GET(DT_CHOSEN(zephyr_shell_uart));
+
+BUILD_ASSERT(DT_NODE_HAS_COMPAT(DT_CHOSEN(zephyr_console), zephyr_cdc_acm_uart), "Console device is not ACM CDC UART device");
+static const struct device *const uart = DEVICE_DT_GET(DT_CHOSEN(zephyr_console));
+
 int main(void)
 {
 	size_t color = 0;
-	int rc;
+	int ret = 0;
 
-	if (!device_is_ready(uart) || usb_enable(NULL)) {
+	if (!device_is_ready(uart))
 		return 0;
-	}
 
-	if (device_is_ready(strip)) {
-		LOG_INF("Found LED strip device %s", strip->name);
-	} else {
-		LOG_ERR("LED strip device %s is not ready", strip->name);
+	if (usb_enable(NULL))
+        return 0;
+
+	if (!device_is_ready(strip))
 		return 0;
-	}
 
-	LOG_INF("Displaying pattern on strip");
 	while (1) {
-        LOG_INF("leds");
+
+        printk("Hello World! %s\n", CONFIG_BOARD_TARGET);
 
 		for (size_t cursor = 0; cursor < ARRAY_SIZE(pixels); cursor++) {
 			memset(&pixels, 0x00, sizeof(pixels));
 			memcpy(&pixels[cursor], &colors[color], sizeof(struct led_rgb));
 
-			rc = led_strip_update_rgb(strip, pixels, STRIP_NUM_PIXELS);
-			if (rc) {
-				LOG_ERR("couldn't update strip: %d", rc);
+			ret = led_strip_update_rgb(strip, pixels, STRIP_NUM_PIXELS);
+			if (ret) {
+				LOG_ERR("couldn't update strip: %d", ret);
 			}
 
-			k_sleep(DELAY_TIME);
+			k_sleep(K_MSEC(5000));
 		}
 
 		color = (color + 1) % ARRAY_SIZE(colors);
