@@ -17,6 +17,8 @@ LOG_MODULE_REGISTER(main);
 #include <zephyr/drivers/led_strip.h>
 #include <zephyr/device.h>
 #include <zephyr/drivers/spi.h>
+#include <zephyr/drivers/uart.h>
+#include <zephyr/usb/usb_device.h>
 #include <zephyr/sys/util.h>
 
 #define STRIP_NODE		DT_ALIAS(led_strip)
@@ -40,11 +42,15 @@ static const struct led_rgb colors[] = {
 static struct led_rgb pixels[STRIP_NUM_PIXELS];
 
 static const struct device *const strip = DEVICE_DT_GET(STRIP_NODE);
-
+static const struct device *const uart = DEVICE_DT_GET(DT_CHOSEN(zephyr_shell_uart));
 int main(void)
 {
 	size_t color = 0;
 	int rc;
+
+	if (!device_is_ready(uart) || usb_enable(NULL)) {
+		return 0;
+	}
 
 	if (device_is_ready(strip)) {
 		LOG_INF("Found LED strip device %s", strip->name);
@@ -55,6 +61,8 @@ int main(void)
 
 	LOG_INF("Displaying pattern on strip");
 	while (1) {
+        LOG_INF("leds");
+
 		for (size_t cursor = 0; cursor < ARRAY_SIZE(pixels); cursor++) {
 			memset(&pixels, 0x00, sizeof(pixels));
 			memcpy(&pixels[cursor], &colors[color], sizeof(struct led_rgb));
