@@ -16,6 +16,7 @@ LOG_MODULE_REGISTER(main);
 #include <zephyr/kernel.h>
 #include <zephyr/drivers/led_strip.h>
 #include <zephyr/device.h>
+#include <zephyr/drivers/i2c.h>
 #include <zephyr/drivers/spi.h>
 #include <zephyr/drivers/uart.h>
 #include <zephyr/usb/usb_device.h>
@@ -43,6 +44,7 @@ static const struct device *const strip = DEVICE_DT_GET(STRIP_NODE);
 
 BUILD_ASSERT(DT_NODE_HAS_COMPAT(DT_CHOSEN(zephyr_console), zephyr_cdc_acm_uart), "Console device is not ACM CDC UART device");
 static const struct device *const uart = DEVICE_DT_GET(DT_CHOSEN(zephyr_console));
+static const struct device *const i2c = DEVICE_DT_GET(DT_NODELABEL(i2c1));
 
 int main(void)
 {
@@ -62,6 +64,23 @@ int main(void)
 
         printk("Hello World! %s\n", CONFIG_BOARD_TARGET);
 
+        uint8_t error = 0u;
+        uint8_t dst;
+        struct i2c_msg msgs[1];
+        msgs[0].buf = &dst;
+        msgs[0].len = 1U;
+        msgs[0].flags = I2C_MSG_WRITE | I2C_MSG_STOP;
+
+        for (uint16_t x = 0; x <= 0x7f; x++) {
+            error = i2c_transfer(i2c, &msgs[0], 1, x);
+            if (error == 0)
+                printk("I2C FOUND: 0x%02x\n", x);
+            else
+                printk("i2c error %d\n", error);
+		    k_sleep(K_MSEC(100));
+        }
+
+        /*
 		for (size_t cursor = 0; cursor < ARRAY_SIZE(pixels); cursor++) {
 			memset(&pixels, 0x00, sizeof(pixels));
 			memcpy(&pixels[cursor], &colors[color], sizeof(struct led_rgb));
@@ -75,6 +94,7 @@ int main(void)
 		}
 
 		color = (color + 1) % ARRAY_SIZE(colors);
+        */
 	}
 
 	return 0;
