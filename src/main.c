@@ -93,9 +93,20 @@ int main(void) {
             continue;
         }
 
+        int32_t lux_value = value_all.val1;
+
+        uint16_t lux_min = 20;
+        uint16_t lux_max = 6000;
+        uint16_t lux_range = lux_max - lux_min;
+        uint16_t output_min = 0;
+        uint16_t output_max = 80;
+        uint16_t output_range = output_max - output_min;
+        uint16_t output = (((lux_value - lux_min) * output_range) / lux_range) + output_min;
+
         printk("SENSOR_CHAN_ALL     %d,%d\n", value_all.val1, value_all.val2);
         printk("SENSOR_CHAN_LIGHT   %d,%d\n", value_light.val1, value_light.val2);
         printk("SENSOR_CHAN_IR      %d,%d\n", value_ir.val1, value_ir.val2);
+        printk("lux, output         %d,%d\n\n", lux_value, output);
 
         k_sleep(K_MSEC(1000));
 
