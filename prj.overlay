@@ -16,3 +16,10 @@
 	};
 };
 
+&i2c1 {
+	tsl2591: tsl2591@29 {
+		compatible = "ams,tsl2591";
+		reg = <0x29>;
+	};
+};
+
