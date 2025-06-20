@@ -34,7 +34,7 @@ while True:
             lux = json_dict['lux']
             ready = True
         except json.JSONDecodeError:
-            print(f"decode error {json_dict}")
+            print(f"decode error, is this json?")
 
     if not ready:
         time.sleep(0.01)
