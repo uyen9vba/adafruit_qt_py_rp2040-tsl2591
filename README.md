@@ -2,6 +2,6 @@
 
 ```
 west build -b adafruit_qt_py_rp2040
-cp build/zephyr/zephyr.ufs /d/
+cp build/zephyr/zephyr.uf2 /d/
 python scripts/host.py &>/dev/null &
 ```
