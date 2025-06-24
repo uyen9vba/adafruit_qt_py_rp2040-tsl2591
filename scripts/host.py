@@ -42,7 +42,7 @@ while True:
    
     ready = False
     lux_min = 0
-    lux_max = 300
+    lux_max = 500
     lux_range = lux_max - lux_min
     output_min = 0
     output_max = 80
