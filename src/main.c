@@ -49,6 +49,8 @@ int main(void) {
 
     printk("%s\n", CONFIG_BOARD_TARGET);
 
+    int64_t stamp = k_uptime_get();
+
     while (1) {
 
         /* Unfortunately, datasheet does not provide a lux conversion formula for this particular
@@ -74,18 +76,6 @@ int main(void) {
             printk("sensor_channel_get %d", ret);
             continue;
         }
-        
-        color.g = 0x10;
-        ret = led_strip_update_rgb(strip, &color, STRIP_NUM_PIXELS);
-        if (ret)
-            printk("led_strip_update_rgb %d", ret);
-
-        /*
-        printk("SENSOR_CHAN_ALL     %d,%d\n", value_all.val1, value_all.val2);
-        printk("SENSOR_CHAN_LIGHT   %d,%d\n", value_light.val1, value_light.val2);
-        printk("SENSOR_CHAN_IR      %d,%d\n", value_ir.val1, value_ir.val2);
-        printk("lux, output         %d,%d\n\n", lux, output);
-        */
 
         json.lux = value_all.val1;
         json.visible = value_light.val1;
@@ -97,13 +87,21 @@ int main(void) {
         else
             printk("%s\n", buf);
 
-        k_sleep(K_MSEC(100));
-        color.g = 0x00;
+        /*
+         * Flash LED periodically to indicate the no errors have occurred.
+         */
+        int64_t delta = k_uptime_get() - stamp;
+        if (delta > 1000)
+            stamp = k_uptime_get();
+        if (delta <= 900)
+            color.g = 0x00;
+        else if (delta <= 1000)
+            color.g = 0x10;
         ret = led_strip_update_rgb(strip, &color, STRIP_NUM_PIXELS);
         if (ret)
             printk("led_strip_update_rgb %d", ret);
 
-        k_sleep(K_MSEC(900));
+        k_sleep(K_MSEC(1));
 	}
 
 	return 0;
