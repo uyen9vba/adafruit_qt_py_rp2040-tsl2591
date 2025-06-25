@@ -7,3 +7,9 @@ nohup pythonw scripts/host.py &>/dev/null &
 # current jobs in session
 jobs
 ```
+
+## Windows
+Add batch file under startup programs.
+```
+cp scripts/adafruit_qt_py_rp2040-tsl2591-startup.bat ~/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Startup
+```
