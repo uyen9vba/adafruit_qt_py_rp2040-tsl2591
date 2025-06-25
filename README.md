@@ -2,6 +2,8 @@
 
 ```
 west build -b adafruit_qt_py_rp2040
-cp build/zephyr/zephyr.uf2 /d/
+cp build/zephyr/zephyr.uf2 mnt
 nohup pythonw scripts/host.py &>/dev/null &
+# current jobs in session
+jobs
 ```
