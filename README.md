@@ -13,3 +13,9 @@ Add batch file under startup programs.
 ```
 cp scripts/adafruit_qt_py_rp2040-tsl2591-startup.bat ~/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Startup
 ```
+
+## TODO
+Low pass filter or something similar
+Linux startup script 
+Control more than 1 monitor simultaneously (config script?)
+
