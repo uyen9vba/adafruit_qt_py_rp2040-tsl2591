@@ -25,7 +25,7 @@ def task(con=None):
     ready = False
     while True:
         if con.in_waiting <= 0:
-            time.sleep(0.01)
+            time.sleep(0.1)
             continue
 
         data = con.read(con.in_waiting).decode('utf-8')
@@ -41,7 +41,7 @@ def task(con=None):
                 print(f"decode error, is this json?")
 
         if not ready:
-            time.sleep(0.01)
+            time.sleep(0.1)
             continue
        
         ready = False
@@ -56,7 +56,7 @@ def task(con=None):
         #result = subprocess.run(['twinkletray', '--List'], capture_output=True, text=True)
         result = subprocess.run(['twinkletray', '--MonitorNum=2', f"--Set={output}"], capture_output=True, text=True)
 
-        time.sleep(0.01)
+        time.sleep(0.1)
 
 if __name__ == "__main__":
     while True:
