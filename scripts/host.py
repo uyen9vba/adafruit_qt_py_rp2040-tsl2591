@@ -54,7 +54,7 @@ def task(con=None):
         output = (((lux - lux_min) * output_range) / lux_range) + output_min
         print(f"lux {lux} output {output}")
         #result = subprocess.run(['twinkletray', '--List'], capture_output=True, text=True)
-        result = subprocess.run(['twinkletray', '--MonitorNum=2', f"--Set={output}"], capture_output=True, text=True)
+        subprocess.run(['twinkletray', '--MonitorNum=2', f"--Set={output}"], shell=True)
 
         time.sleep(0.1)
 
