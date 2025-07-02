@@ -9,7 +9,7 @@ jobs
 ```
 
 ## Windows
-Add batch file under startup programs.
+The script uses home path as default location. Add batch file under startup programs.
 ```
 cp scripts/adafruit_qt_py_rp2040-tsl2591-startup.bat ~/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Startup
 ```
